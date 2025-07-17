@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge"
 import { Github, Linkedin, Mail, ExternalLink, Code, Database, Globe, Smartphone } from "lucide-react"
 import Link from "next/link"
 
+// Juste un test de redeploiement
+
 function ProjectCard() {
   const [isExpanded, setIsExpanded] = useState(false)
 
