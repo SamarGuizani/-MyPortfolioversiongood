@@ -1,16 +1,20 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Mail, Send, User, MessageSquare, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
-import { submitContact } from "@/app/actions/contact"
 import { useToast } from "@/hooks/use-toast"
+import emailjs from '@emailjs/browser';
+
+// EmailJS configuration
+const EMAILJS_SERVICE_ID = "service_7oay66r"
+const EMAILJS_TEMPLATE_ID = "template_8vn6lk9" // Updated to the correct template ID
+const EMAILJS_PUBLIC_KEY = "s34WqnAPaB0o5fyBH"
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -18,6 +22,16 @@ export function ContactForm() {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
   const [successMessage, setSuccessMessage] = useState("")
   const { toast } = useToast()
+
+  // Initialize EmailJS
+  useEffect(() => {
+    try {
+      emailjs.init(EMAILJS_PUBLIC_KEY)
+      console.log("EmailJS initialized successfully")
+    } catch (error) {
+      console.error("EmailJS initialization error:", error)
+    }
+  }, [])
 
   const validateEmail = (email: string): boolean => {
     const allowedDomains = [
@@ -57,6 +71,9 @@ export function ContactForm() {
 
   async function handleSubmit(formData: FormData) {
     const email = formData.get("email") as string
+    const name = formData.get("name") as string
+    const subject = formData.get("subject") as string
+    const message = formData.get("message") as string
 
     if (!validateEmail(email)) {
       setEmailError("Please use a valid email address")
@@ -68,15 +85,42 @@ export function ContactForm() {
     setSubmitStatus("idle")
 
     try {
-      const result = await submitContact(formData)
+      console.log("Preparing to send email with EmailJS...")
+      
+      // Updated template parameters to match exactly with your template variables
+      const templateParams = {
+        // Variables for the first section
+        name: name,
+        time: new Date().toLocaleString(),
+        message: message,
+        
+        // Variables for the second section
+        from_name: name,
+        from_email: email,
+        subject: subject,
+        
+        // Additional email settings
+        reply_to: email,
+      }
 
-      if (result.success) {
+      console.log("Sending with parameters:", templateParams)
+
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      )
+
+      console.log("EmailJS Response:", result)
+
+      if (result.status === 200) {
         setSubmitStatus("success")
-        setSuccessMessage(result.message || "Message sent successfully!")
+        setSuccessMessage(`Message sent successfully! We'll reply to you at ${email}`)
 
         toast({
           title: "✅ Message Sent Successfully!",
-          description: "Your message has been sent directly to guizanisamar@ieee.org",
+          description: `Your message has been sent! We'll reply to ${email}`,
         })
 
         // Reset form
@@ -89,18 +133,14 @@ export function ContactForm() {
           setSuccessMessage("")
         }, 8000)
       } else {
-        setSubmitStatus("error")
-        toast({
-          title: "❌ Failed to Send Message",
-          description: result.error || "Please try again or email me directly at guizanisamar@ieee.org",
-          variant: "destructive",
-        })
+        throw new Error(`Failed to send email. Status: ${result.status}`)
       }
     } catch (error) {
+      console.error('Email sending error:', error)
       setSubmitStatus("error")
       toast({
-        title: "❌ Connection Error",
-        description: "Please check your internet connection or email me directly at guizanisamar@ieee.org",
+        title: "❌ Failed to Send Message",
+        description: error instanceof Error ? error.message : "Please try again or email me directly at guizanisamar@ieee.org",
         variant: "destructive",
       })
     } finally {
@@ -227,12 +267,12 @@ export function ContactForm() {
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Sending to guizanisamar@ieee.org...
+                Sending message...
               </>
             ) : (
               <>
                 <Send className="mr-2 h-5 w-5" />
-                Send Message Directly
+                Send Message
               </>
             )}
           </Button>
