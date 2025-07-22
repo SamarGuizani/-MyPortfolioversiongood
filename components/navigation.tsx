@@ -15,9 +15,11 @@ export function Navigation({ activeSection }: NavigationProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
+      setScrolled(window.scrollY > 20) // Changed from 50 to 20 for quicker visibility
     }
 
+    // Initial check
+    handleScroll()
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
@@ -35,7 +37,15 @@ export function Navigation({ activeSection }: NavigationProps) {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+      // Calculate position considering the fixed header
+      const headerOffset = 80 // Height of your header
+      const elementPosition = element.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      })
     }
     setIsOpen(false)
   }
@@ -43,7 +53,7 @@ export function Navigation({ activeSection }: NavigationProps) {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-slate-900/95 backdrop-blur-md shadow-lg" : "bg-transparent"
+        scrolled || isOpen ? "bg-slate-900/95 backdrop-blur-md shadow-lg" : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-4">
@@ -51,7 +61,8 @@ export function Navigation({ activeSection }: NavigationProps) {
           {/* Logo */}
           <Link
             href="#home"
-            className="text-xl font-bold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent"
+            onClick={() => scrollToSection("home")}
+            className="text-xl font-bold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent hover:scale-105 transition-transform cursor-pointer"
           >
             Samar Guizani
           </Link>
@@ -63,7 +74,7 @@ export function Navigation({ activeSection }: NavigationProps) {
                 key={item.id}
                 variant="ghost"
                 onClick={() => scrollToSection(item.id)}
-                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-teal-400 ${
+                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 hover:text-teal-400 cursor-pointer ${
                   activeSection === item.id ? "text-teal-400 bg-teal-500/10" : "text-gray-300 hover:bg-white/5"
                 }`}
               >
@@ -76,7 +87,12 @@ export function Navigation({ activeSection }: NavigationProps) {
           </div>
 
           {/* Mobile Menu Button */}
-          <Button variant="ghost" size="icon" className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="md:hidden text-white hover:bg-white/10 cursor-pointer" 
+            onClick={() => setIsOpen(!isOpen)}
+          >
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
@@ -90,7 +106,7 @@ export function Navigation({ activeSection }: NavigationProps) {
                   key={item.id}
                   variant="ghost"
                   onClick={() => scrollToSection(item.id)}
-                  className={`w-full justify-start text-left transition-all duration-300 ${
+                  className={`w-full justify-start text-left transition-all duration-300 cursor-pointer ${
                     activeSection === item.id
                       ? "text-teal-400 bg-teal-500/10"
                       : "text-gray-300 hover:text-teal-400 hover:bg-white/5"

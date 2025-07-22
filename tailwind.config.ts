@@ -1,13 +1,12 @@
 import type { Config } from "tailwindcss"
 
-const config: Config = {
+const config = {
   darkMode: ["class"],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
-    "./app/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
-    "*.{js,ts,jsx,tsx,mdx}",
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
   prefix: "",
   theme: {
@@ -53,43 +52,6 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom palette colors from your image
-        teal: {
-          50: "#f0fdfa",
-          100: "#ccfbf1",
-          200: "#99f6e4",
-          300: "#5eead4",
-          400: "#2dd4bf", // Main teal from palette
-          500: "#14b8a6",
-          600: "#0d9488",
-          700: "#0f766e",
-          800: "#115e59",
-          900: "#134e4a",
-        },
-        blue: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6", // Main blue from palette
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
-        },
-        purple: {
-          50: "#faf5ff",
-          100: "#f3e8ff",
-          200: "#e9d5ff",
-          300: "#d8b4fe",
-          400: "#c084fc",
-          500: "#a855f7", // Main purple from palette
-          600: "#9333ea",
-          700: "#7c3aed",
-          800: "#6b21a8",
-          900: "#581c87",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -105,10 +67,55 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "spin-reverse": {
+          "0%": { transform: "rotate(360deg)" },
+          "100%": { transform: "rotate(0deg)" },
+        },
+        "orbit-1": {
+          "0%": { transform: "rotate(0deg) translateX(120px)" },
+          "100%": { transform: "rotate(360deg) translateX(120px)" },
+        },
+        "orbit-2": {
+          "0%": { transform: "rotate(72deg) translateX(100px)" },
+          "100%": { transform: "rotate(432deg) translateX(100px)" },
+        },
+        "orbit-3": {
+          "0%": { transform: "rotate(144deg) translateX(140px)" },
+          "100%": { transform: "rotate(504deg) translateX(140px)" },
+        },
+        "orbit-4": {
+          "0%": { transform: "rotate(216deg) translateX(90px)" },
+          "100%": { transform: "rotate(576deg) translateX(90px)" },
+        },
+        "orbit-5": {
+          "0%": { transform: "rotate(288deg) translateX(110px)" },
+          "100%": { transform: "rotate(648deg) translateX(110px)" },
+        },
+        "orbit-6": {
+          "0%": { transform: "rotate(360deg) translateX(130px)" },
+          "100%": { transform: "rotate(720deg) translateX(130px)" },
+        },
+        "particle-float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-20px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "spin-slow": "spin-slow 20s linear infinite",
+        "spin-reverse": "spin-reverse 15s linear infinite",
+        "orbit-1": "orbit-1 12s linear infinite",
+        "orbit-2": "orbit-2 10s linear infinite",
+        "orbit-3": "orbit-3 14s linear infinite",
+        "orbit-4": "orbit-4 8s linear infinite",
+        "orbit-5": "orbit-5 16s linear infinite",
+        "orbit-6": "orbit-6 18s linear infinite",
+        "particle-float": "particle-float 3s ease-in-out infinite",
       },
     },
   },

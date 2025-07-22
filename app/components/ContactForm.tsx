@@ -13,8 +13,12 @@ import emailjs from '@emailjs/browser';
 
 // EmailJS configuration
 const EMAILJS_SERVICE_ID = "service_7oay66r"
-const EMAILJS_TEMPLATE_ID = "template_8vn6lk9" // Updated to the correct template ID
+const EMAILJS_TEMPLATE_ID = "template_8vn6lk9"
 const EMAILJS_PUBLIC_KEY = "s34WqnAPaB0o5fyBH"
+
+// Rate limiting configuration
+const RATE_LIMIT_DURATION = 60 * 1000; // 1 minute in milliseconds
+const MAX_EMAILS_PER_DURATION = 2; // Maximum 2 emails per minute
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -22,6 +26,9 @@ export function ContactForm() {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
   const [successMessage, setSuccessMessage] = useState("")
   const { toast } = useToast()
+
+  // Rate limiting state
+  const [emailsSent, setEmailsSent] = useState<number[]>([])
 
   // Initialize EmailJS
   useEffect(() => {
@@ -32,6 +39,16 @@ export function ContactForm() {
       console.error("EmailJS initialization error:", error)
     }
   }, [])
+
+  // Check rate limit
+  const isRateLimited = () => {
+    const now = Date.now()
+    // Clean up old entries
+    const recentEmails = emailsSent.filter(time => now - time < RATE_LIMIT_DURATION)
+    setEmailsSent(recentEmails)
+    
+    return recentEmails.length >= MAX_EMAILS_PER_DURATION
+  }
 
   const validateEmail = (email: string): boolean => {
     const allowedDomains = [
@@ -69,14 +86,49 @@ export function ContactForm() {
     }
   }
 
+  // Basic content validation
+  const validateContent = (content: string) => {
+    // Check for suspicious patterns
+    const suspiciousPatterns = [
+      /<script/i,
+      /javascript:/i,
+      /data:/i,
+      /onclick/i,
+      /onerror/i,
+      /eval\(/i,
+    ]
+    return !suspiciousPatterns.some(pattern => pattern.test(content))
+  }
+
   async function handleSubmit(formData: FormData) {
     const email = formData.get("email") as string
     const name = formData.get("name") as string
     const subject = formData.get("subject") as string
     const message = formData.get("message") as string
 
+    // Validate email
     if (!validateEmail(email)) {
       setEmailError("Please use a valid email address")
+      return
+    }
+
+    // Check rate limit
+    if (isRateLimited()) {
+      toast({
+        title: "❌ Too Many Attempts",
+        description: "Please wait a minute before sending another message.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Validate content
+    if (!validateContent(message) || !validateContent(subject)) {
+      toast({
+        title: "❌ Invalid Content",
+        description: "Your message contains invalid content.",
+        variant: "destructive",
+      })
       return
     }
 
@@ -87,23 +139,15 @@ export function ContactForm() {
     try {
       console.log("Preparing to send email with EmailJS...")
       
-      // Updated template parameters to match exactly with your template variables
       const templateParams = {
-        // Variables for the first section
         name: name,
         time: new Date().toLocaleString(),
         message: message,
-        
-        // Variables for the second section
         from_name: name,
         from_email: email,
         subject: subject,
-        
-        // Additional email settings
         reply_to: email,
       }
-
-      console.log("Sending with parameters:", templateParams)
 
       const result = await emailjs.send(
         EMAILJS_SERVICE_ID,
@@ -112,9 +156,10 @@ export function ContactForm() {
         EMAILJS_PUBLIC_KEY
       )
 
-      console.log("EmailJS Response:", result)
-
       if (result.status === 200) {
+        // Update rate limiting
+        setEmailsSent(prev => [...prev, Date.now()])
+
         setSubmitStatus("success")
         setSuccessMessage(`Message sent successfully! We'll reply to you at ${email}`)
 
