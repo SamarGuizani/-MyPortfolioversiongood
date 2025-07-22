@@ -2,17 +2,17 @@
 
 import type React from "react"
 import { useAnimationOnScroll } from "@/hooks/use-animation-on-scroll"
+import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
-interface AnimatedSectionProps {
+interface AnimatedCardProps {
   children: React.ReactNode
   className?: string
-  id?: string
   animation?: "slide-up" | "slide-left" | "slide-right" | "fade-scale" | "flip-x" | "flip-y" | "zoom-rotate" | "elastic"
   delay?: number
 }
 
-export function AnimatedSection({ children, className, id, animation = "slide-up", delay = 0 }: AnimatedSectionProps) {
+export function AnimatedCard({ children, className, animation = "fade-scale", delay = 0 }: AnimatedCardProps) {
   const { elementRef, isVisible } = useAnimationOnScroll({ threshold: 0.1 })
 
   const getAnimationClass = () => {
@@ -23,8 +23,8 @@ export function AnimatedSection({ children, className, id, animation = "slide-up
         return "animate-slide-in-left"
       case "slide-right":
         return "animate-slide-in-right"
-      case "fade-scale":
-        return "animate-fade-in-scale"
+      case "slide-up":
+        return "animate-slide-in-bottom"
       case "flip-x":
         return "animate-flip-in-x"
       case "flip-y":
@@ -34,7 +34,7 @@ export function AnimatedSection({ children, className, id, animation = "slide-up
       case "elastic":
         return "animate-elastic-in"
       default:
-        return "animate-slide-in-bottom"
+        return "animate-fade-in-scale"
     }
   }
 
@@ -44,13 +44,12 @@ export function AnimatedSection({ children, className, id, animation = "slide-up
   }
 
   return (
-    <div
+    <Card
       ref={elementRef}
-      id={id}
-      className={cn(getAnimationClass(), getDelayClass(), className)}
+      className={cn("hover-lift", getAnimationClass(), getDelayClass(), className)}
       style={{ animationDelay: delay > 2000 ? `${delay}ms` : undefined }}
     >
       {children}
-    </div>
+    </Card>
   )
 } 
