@@ -12,47 +12,102 @@ import { Badge } from "@/components/ui/badge"
 import { Github, Linkedin, Mail, ExternalLink, Code, Database, Globe, Smartphone } from "lucide-react"
 import Link from "next/link"
 
-// Juste un test de redeploiement
+interface Project {
+  title: string;
+  icon: React.ElementType;
+  date: string;
+  shortDescription: string;
+  fullDescription: string;
+  link: string;
+}
 
 function ProjectCard() {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const projects: Project[] = [
+    {
+      title: "TouriGuide",
+      icon: Globe,
+      date: "01/03/2025 – ONGOING",
+      shortDescription: "Creating an intelligent tourism application that allows users to discover iconic sites...",
+      fullDescription: "Creating an intelligent tourism application that allows users to discover iconic sites, local activities and personalized services according to their location. The application integrates an interactive map and real-time recommendations.",
+      link: "https://github.com/SamarGuizani/tourism-app--8-"
+    },
+    {
+      title: "Web Scraper for Clothing Websites",
+      icon: Code,
+      date: "2024",
+      shortDescription: "Developed a web scraping tool using Python and Scrapy to extract product data from online clothing stores...",
+      fullDescription: "Developed a web scraping tool using Python and Scrapy to extract product data from online clothing stores. The scraper collects information such as item names and prices and exports the data into structured formats (CSV/JSON) for analysis or use in e-commerce research.",
+      link: "https://github.com/SamarGuizani/Scarpy"
+    },
+    {
+      title: "AI Chatbot with Google Colab",
+      icon: Database,
+      date: "2024",
+      shortDescription: "Built an AI-powered chatbot using a pre-trained language model in Google Colab...",
+      fullDescription: "Built an AI-powered chatbot using a pre-trained language model in Google Colab. The bot can respond to user queries in natural language, with applications ranging from customer support to personal assistants. Integrated features include conversational memory and a clean UI for testing.",
+      link: "https://github.com/SamarGuizani/Chatbot-RAG-Vetement"
+    },
+    {
+      title: "Personal Portfolio Website",
+      icon: Globe,
+      date: "2024",
+      shortDescription: "A responsive and modern portfolio site to showcase my projects, skills, and contact details...",
+      fullDescription: "A responsive and modern portfolio site to showcase my projects, skills, and contact details. Built with animations, a dynamic contact form, and project sections. Deployed using Vercel and GitHub, with future support for custom domain and backend enhancements.",
+      link: "https://github.com/SamarGuizani/-MyPortfolioversiongood"
+    }
+  ];
 
-  const shortDescription = "Creating an intelligent tourism application that allows users to discover iconic sites..."
-  const fullDescription =
-    "Creating an intelligent tourism application that allows users to discover iconic sites, local activities and personalized services according to their location. The application integrates an interactive map and real-time recommendations."
+  const [expandedStates, setExpandedStates] = useState<boolean[]>(new Array(projects.length).fill(false));
+
+  const toggleExpanded = (index: number) => {
+    setExpandedStates(prev => {
+      const newStates = [...prev];
+      newStates[index] = !newStates[index];
+      return newStates;
+    });
+  };
 
   return (
-    <Card className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-blue-500/20 hover:border-blue-400/40 transition-all duration-300">
-      <CardHeader>
-        <CardTitle className="text-blue-300 flex items-center gap-2">
-          <Globe className="h-5 w-5" />
-          TouriGuide
-        </CardTitle>
-        <CardDescription className="text-gray-400">01/03/2025 – ONGOING</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-gray-300 mb-4">
-          {isExpanded ? fullDescription : shortDescription}
-          {!isExpanded && (
-            <button onClick={() => setIsExpanded(true)} className="text-blue-400 hover:text-blue-300 ml-1 underline">
-              (more)
-            </button>
-          )}
-          {isExpanded && (
-            <button onClick={() => setIsExpanded(false)} className="text-blue-400 hover:text-blue-300 ml-2 underline">
-              (less)
-            </button>
-          )}
-        </p>
-        <div className="flex gap-2">
-          <Button size="sm" className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            View Project
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  )
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {projects.map((project, index) => {
+        const Icon = project.icon;
+        return (
+          <Card key={index} className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border-blue-500/20 hover:border-blue-400/40 transition-all duration-300">
+            <CardHeader>
+              <CardTitle className="text-blue-300 flex items-center gap-2">
+                <Icon className="h-5 w-5" />
+                {project.title}
+              </CardTitle>
+              <CardDescription className="text-gray-400">{project.date}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-300 mb-4">
+                {expandedStates[index] ? project.fullDescription : project.shortDescription}
+                {!expandedStates[index] && (
+                  <button onClick={() => toggleExpanded(index)} className="text-blue-400 hover:text-blue-300 ml-1 underline">
+                    (more)
+                  </button>
+                )}
+                {expandedStates[index] && (
+                  <button onClick={() => toggleExpanded(index)} className="text-blue-400 hover:text-blue-300 ml-2 underline">
+                    (less)
+                  </button>
+                )}
+              </p>
+              <div className="flex gap-2">
+                <Button size="sm" className="bg-blue-500/20 text-blue-300 hover:bg-blue-500/30" asChild>
+                  <Link href={project.link} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    View Project
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
+  );
 }
 
 export default function Home() {
@@ -309,7 +364,7 @@ export default function Home() {
               </h2>
             </div>
           </div>
-          <div className="max-w-2xl mx-auto animate-content-appear">
+          <div className="max-w-6xl mx-auto animate-content-appear px-4">
             <ProjectCard />
           </div>
         </div>
@@ -429,10 +484,10 @@ export default function Home() {
             </Button>
             <Button variant="ghost" size="sm" asChild className="text-cyan-400 hover:text-cyan-300">
               <Link
-                href="https://fbubzjkbpczpzjtwrjym.supabase.co/storage/v1/object/public/portfolio-assets/Cv_Samar_Guizani.pdf"
+                href="https://fbubzjkbpczpzjtwrjym.supabase.co/storage/v1/object/public/portfolio-assets/SamarGuizani_Cv.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
-                download="CV_Samar_Guizani.pdf"
+                download="SamarGuizani_Cv.pdf"
               >
                 CV
               </Link>

@@ -11,10 +11,10 @@ export function CVDownload() {
       className="bg-gradient-to-r from-purple-500 to-teal-500 hover:from-purple-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
     >
       <Link
-        href="https://fbubzjkbpczpzjtwrjym.supabase.co/storage/v1/object/public/portfolio-assets/Cv_Samar_Guizani.pdf"
+        href="https://fbubzjkbpczpzjtwrjym.supabase.co/storage/v1/object/public/portfolio-assets/SamarGuizani_Cv.pdf"
         target="_blank"
         rel="noopener noreferrer"
-        download="CV_Samar_Guizani.pdf"
+        download="SamarGuizani_Cv.pdf"
         className="flex items-center gap-2"
       >
         <Download className="h-4 w-4" />

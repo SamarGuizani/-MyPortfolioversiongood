@@ -110,29 +110,6 @@ export function downloadCV() {
   yPos += 8
   doc.setFontSize(10)
   doc.setFont("helvetica", "normal")
-  doc.text("10/03/2025 – EN COURS", 20, yPos)
-  yPos += 5
-  doc.setFont("helvetica", "bold")
-  doc.text("PharmaApp", 20, yPos)
-  yPos += 8
-  doc.setFont("helvetica", "normal")
-  doc.text(
-    "• Développement d'une application web de e-pharmacie permettant aux patients de consulter les pharmacies, commander des",
-    20,
-    yPos,
-  )
-  yPos += 4
-  doc.text("médicaments en ligne et scanner des ordonnances.", 22, yPos)
-  yPos += 4
-  doc.text(
-    "• Intégration des fonctionnalités de création de compte, panier, suivi de commande et gestion des priorités selon la méthode",
-    20,
-    yPos,
-  )
-  yPos += 4
-  doc.text("Scrum.", 22, yPos)
-  yPos += 8
-
   doc.text("01/03/2025 – EN COURS", 20, yPos)
   yPos += 5
   doc.setFont("helvetica", "bold")
@@ -143,7 +120,25 @@ export function downloadCV() {
     "Création d'une application touristique intelligente permettant aux utilisateurs de découvrir les sites emblématiques, activités locales et services personnalisés selon leur emplacement. L'application intègre une carte interactive et des recommandations en temps réel."
   const splitTouri = doc.splitTextToSize(touriText, 170)
   doc.text(splitTouri, 20, yPos)
+  doc.setTextColor(0, 0, 255)
+  doc.textWithLink("Voir le projet sur GitHub", 20, yPos + splitTouri.length * 4, { url: "https://github.com/SamarGuizani/tourism-app--8-" })
+  doc.setTextColor(0, 0, 0)
   yPos += splitTouri.length * 4 + 10
+
+  doc.text("03/2024", 20, yPos)
+  yPos += 5
+  doc.setFont("helvetica", "bold")
+  doc.text("Portfolio Personnel", 20, yPos)
+  yPos += 8
+  doc.setFont("helvetica", "normal")
+  const portfolioText =
+    "Site portfolio responsive et moderne pour présenter mes projets, compétences et coordonnées. Construit avec des animations, un formulaire de contact dynamique et des sections de projets. Déployé avec Vercel et GitHub."
+  const splitPortfolio = doc.splitTextToSize(portfolioText, 170)
+  doc.text(splitPortfolio, 20, yPos)
+  doc.setTextColor(0, 0, 255)
+  doc.textWithLink("Voir le projet sur GitHub", 20, yPos + splitPortfolio.length * 4, { url: "https://github.com/SamarGuizani/-MyPortfolioversiongood" })
+  doc.setTextColor(0, 0, 0)
+  yPos += splitPortfolio.length * 4 + 10
 
   // COMPÉTENCES TECHNIQUES
   doc.setFontSize(12)
